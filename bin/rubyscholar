@@ -22,10 +22,9 @@ command :scrape do |c|
   c.option '--out [Output File]', 'File to output the scrapes to'
 
   c.action do |args, options|
-   options.default \
-      :config => 'config.yml',
-      :out  => 'scholar.html'
-   config    = YAML.load_file('config.yml')
+   options.default :config => "config.yml", :out  => "scholar.html"
+   configFile= "#{options.config}"
+   config    = YAML.load_file(configFile)
    parsed    = Rubyscholar::Parser.new(config["url"], 
                                 config["email"])
    formatter = Rubyscholar::Formatter.new(parsed, 
@@ -38,10 +37,40 @@ command :scrape do |c|
        config["italicize"].each do |term|
        html.gsub!( term , '<em>' + term + '</em>')
    end
-
-   f= File.open('scholar.html','w')
+   outFile="#{options.out}"
+   f= File.open(outFile,'w')
    f.write html
    f.close()
 end
+end
+
+command :init do |c|
+  c.syntax = 'rubyscholar init'
+  c.description = 'Creates a sample config.yml file for Scraping.'
+  c.action do |args, options|
+    say '# Intialising a configuration file for Rubyscholar.'
+    if File.exist?("config.yml")
+      abort("Initialisation aborted!") if ask("config.yml already exists. Do you want to overwrite?", ['y', 'n']) == 'n'
+    end
+    puts "# Creating config.yml."
+    open("config.yml", 'w') do |page|
+      page.puts "# Google Scholar page (you can choose how you sort it)"
+      page.puts "url: "
+      page.puts "\n\n# Name to highlight (withing \" and \")"
+      page.puts "highlight: "
+      page.puts "\n\n# Need an Email address that has been registered with CrossRef to obtain DOIs using their OpenURL service. "
+      page.puts "# e.g. the following should provide an XML file: "
+      page.puts "# http://www.crossref.org/openurl?redirect=false&pid=YOUR@EMAIL>COM&aulast=Wurm&atitle=Behavioral%20Genomics:%20A,%20Bee,%20C,%20G,%20T"
+      page.puts "email: your@email.com"
+      page.puts "\n\n# Show "[Cited Nx]" if N > the following number"
+      page.puts "minCitations: 5 "
+      page.puts "\n\n# Words to italicize (emphasize). These will have \"<em>\" around them. "
+      page.puts "italicize: "
+      page.puts "\n\n# DOIs of articles for which we should show altmetric.org badges. "
+      page.puts "altmetricDOIs:  "
+      page.puts "\n\n# Article titles for which we have urls to PDFs in \"name\" : \"url\" format"
+      page.puts "pdfs:"
+    end
+  end
 end
 
