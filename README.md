@@ -13,6 +13,13 @@ Some features:
 
 # How to use:
 
+### As a Ruby Gem:
+1. Install the gem using: `[sudo] gem install rubyscholar`
+2. Create and configure a `config.yml` file.
+3. Run as `rubyscholar scrape`.
+4. A `scholar.html` file is created.
+5. Done!
+
 ### As a ruby script:
 1. Configure "config.yml"
    If you want DOI retreival to work (including Altmetrics), you need to be 

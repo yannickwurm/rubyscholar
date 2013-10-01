@@ -8,13 +8,14 @@ require 'yaml'
 
 
 program :name, 'rubysholar'
-program :version, Rubyscholar::VERSION
+program :version, '0.0.2'
 program :description, 'Rubyscholar scrapes google scholar and formats it into a scholar.html file.'
 
 default_command :scrape
 
 command :scrape do |c|
   c.syntax = 'rubyscholar scrape [options]'
+  c.summary = '' 
   c.description = "Scape google scholar for new publications"
 
   c.option '--config [Config File]', 'Config file to use'
@@ -22,9 +23,9 @@ command :scrape do |c|
 
   c.action do |args, options|
    options.default \
-      :interval => 2,
-      :timeout  => 60
-   config    = YAML.load_file('{options.config}')
+      :config => 'config.yml',
+      :out  => 'scholar.html'
+   config    = YAML.load_file('config.yml')
    parsed    = Rubyscholar::Parser.new(config["url"], 
                                 config["email"])
    formatter = Rubyscholar::Formatter.new(parsed, 
@@ -38,9 +39,9 @@ command :scrape do |c|
        html.gsub!( term , '<em>' + term + '</em>')
    end
 
-   f= File.open('{options.out}','w')
+   f= File.open('scholar.html','w')
    f.write html
-   f.close
-  end
+   f.close()
+end
 end
 

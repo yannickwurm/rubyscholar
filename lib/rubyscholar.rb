@@ -2,25 +2,25 @@ require "rubyscholar/version"
 require "nokogiri"
 require "open-uri"
 
-module Rubyscholar
+
  class String
   def clean
     # removes leading and trailing whitespace, commas
     self.gsub!(/(^[\s,]+)|([\s,]+$)/, '')
     return self
   end
-end
+ end
 
-
+module Rubyscholar
   class Paper < Struct.new(:title, :url, :authors, :journalName, :journalDetails, :year, :citationCount, :citingPapers, :doi)
-  end  
-  
+  end
+
   class Parser
     attr_accessor :parsedPapers, :crossRefEmail
-    
+
     def initialize(url, crossRefEmail = "")
       @parsedPapers  = []
-      @crossRefEmail = crossRefEmail # if nil doesn't return any DOI
+      @crossRefEmail = crossRefEmail # if nil doesn't retursn any DOI
       parse(url)
     end
 
@@ -43,7 +43,7 @@ end
         #citations
         citeInfo      = paper.css(".cit-dark-link")
         citationCount = citeInfo.text
-        citationUrl   = citationCount.empty?  ? nil : citeInfo.attribute('href').to_s 
+        citationUrl   = citationCount.empty?  ? nil : citeInfo.attribute('href').to_s
 
         # get DOI: needs last name of first author, no funny chars
         lastNameFirstAuthor = ((authors.split(',').first ).split(' ').last ).gsub(/[^A-Za-z\-]/, '')
@@ -54,24 +54,24 @@ end
       STDERR << "Scraped #{parsedPapers.length} from Google Scholar.\n"
     end
 
-    # Scholar doesn't provide DOI. 
-    # But if registered at crossref (its free), DOI can be retreived. 
+    # Scholar doesn't provide DOI.
+    # But if registered at crossref (its free), DOI can be retreived.
     def getDoi(lastNameFirstAuthor, title, crossRefEmail)
       return '' if @crossRefEmail.nil?
-      sleep(1) # to reduce risk 
+      sleep(1) # to reduce risk
       STDERR << "Getting DOI for paper by #{lastNameFirstAuthor}: #{title}.\n"
-      url = 'http://www.crossref.org/openurl?redirect=false' +  
-        '&pid='    + crossRefEmail + 
+      url = 'http://www.crossref.org/openurl?redirect=false' +
+        '&pid='    + crossRefEmail +
         '&aulast=' + lastNameFirstAuthor   +
         '&atitle=' + URI.escape(title)
-      crossRefXML = Nokogiri::XML(open(url)) 
+      crossRefXML = Nokogiri::XML(open(url))
       crossRefXML.search("doi").children.first.content rescue ''
     end
   end
-  
+
   class Formatter
     attr_accessor :parser, :nameToHighlight, :pdfLinks, :altmetricDOIs
-    
+
     def initialize(parser, nameToHighlight = nil, pdfLinks = {}, altmetricDOIs = [], minCitationCount = 1)
       @parser          = parser
       @nameToHighlight = nameToHighlight
@@ -81,14 +81,14 @@ end
     end
 
     def to_html
-      ##@doc = Nokogiri::HTML::DocumentFragment.parse "" 
+      ##@doc = Nokogiri::HTML::DocumentFragment.parse ""
       builder = Nokogiri::HTML::Builder.new do |doc|
         doc.html {
           doc.body {
             @parser.parsedPapers.each_with_index { |paper, index|
               doc.div( :class => "publication") {
                 doc.p {
-                  doc.text ((@parser.parsedPapers).length - index).to_s + '. ' 
+                  doc.text ((@parser.parsedPapers).length - index).to_s + '. '
 
                   doc.b    paper[:title] + '.'
                   doc.text ' (' + paper[:year] + '). '
@@ -107,21 +107,21 @@ end
                   doc.text paper[:journalDetails]
                   unless paper[ :doi].empty?
                     doc.text(' ')
-                    doc.a( :href => URI.join("http://dx.doi.org/", paper[ :doi]))  { 
-                      doc.text "[DOI]" 
-                    } 
+                    doc.a( :href => URI.join("http://dx.doi.org/", paper[ :doi]))  {
+                      doc.text "[DOI]"
+                    }
                   end
                   if @pdfLinks.keys.include?(paper[:title])
                     doc.text(' ')
-                    doc.a( :href => @pdfLinks[paper[:title]])  { 
+                    doc.a( :href => @pdfLinks[paper[:title]])  {
                       doc.text "[PDF]"
-                    } 
+                    }
                   end
                   if paper[ :citationCount].to_i > @minCitations
                     doc.text(' ')
-                    doc.a( :href => paper[ :citingPapers]) { 
-                      doc.text("[Cited #{paper[ :citationCount]}x]") 
-                    } 
+                    doc.a( :href => paper[ :citingPapers]) {
+                      doc.text("[Cited #{paper[ :citationCount]}x]")
+                    }
                   end
                   if altmetricDOIs.include?( paper[ :doi])
                     doc.text(' ')
