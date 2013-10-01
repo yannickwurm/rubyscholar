@@ -62,7 +62,7 @@ command :init do |c|
       page.puts "# e.g. the following should provide an XML file: "
       page.puts "# http://www.crossref.org/openurl?redirect=false&pid=YOUR@EMAIL>COM&aulast=Wurm&atitle=Behavioral%20Genomics:%20A,%20Bee,%20C,%20G,%20T"
       page.puts "email: your@email.com"
-      page.puts "\n\n# Show "[Cited Nx]" if N > the following number"
+      page.puts "\n\n# Show \"[Cited Nx]\" if N > the following number"
       page.puts "minCitations: 5 "
       page.puts "\n\n# Words to italicize (emphasize). These will have \"<em>\" around them. "
       page.puts "italicize: "
