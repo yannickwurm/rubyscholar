@@ -1,11 +1,10 @@
 require_relative '../lib/rubyscholar'
 require 'yaml'
 
-def scrape()
     config    = YAML.load_file('config.yml')
-    parsed    = RubyScholar::Parser.new(config["url"], 
+    parsed    = Rubyscholar::Parser.new(config["url"], 
                                     config["email"])
-    formatter = RubyScholar::Formatter.new(parsed, 
+    formatter = Rubyscholar::Formatter.new(parsed, 
                                        config["highlight"], 
                                        config["pdfs"], 
                                        config["altmetricDOIs"], 
@@ -19,4 +18,3 @@ def scrape()
     f= File.open('scholar.html','w')
     f.write html
     f.close
-end
