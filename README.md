@@ -16,8 +16,11 @@ Some features:
 ### As a Ruby Gem:
 1. Install the gem using: `[sudo] gem install rubyscholar`
 2. Create and configure a `config.yml` file.
-3. Run as `rubyscholar scrape`.
-4. A `scholar.html` file is created.
+      To create a `config.yml` file, run `$ rubyscholar init`
+      Edit the file, filling in your details.
+3. Run as `$ rubyscholar scrape --out file.html `.
+4. A `file.html` file is created containing your citations all formatted
+and ready to use.
 5. Done!
 
 ### As a ruby script:
