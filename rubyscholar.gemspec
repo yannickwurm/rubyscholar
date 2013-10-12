@@ -10,7 +10,8 @@ Gem::Specification.new do |gem|
   gem.email         = ["y.wurm@qmul.ac.uk","arkokoley@live.in"]
   gem.description   = %q{Scrape Google Scholar}
   gem.summary       = %q{Rubyscholar scrapes google scholar and formats it into a scholar.html file.}
-  gem.homepage      = ""
+  gem.homepage      = "http://github.com/yannickwurm/rubyscholar"
+  gem.license       = "MIT"
 
   gem.add_dependency "nokogiri", "~>1.6.0"
   gem.add_dependency "commander", "~>4.1.5"
