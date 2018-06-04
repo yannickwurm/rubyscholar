@@ -118,16 +118,19 @@ module Rubyscholar
                 doc.text '. '
                 doc.em   paper[:journalName] + ' '
                 doc.text paper[:journalDetails]
+
                 unless doi.empty?
                   doc.text(' ')
                   doc.a(href: URI.join("http://dx.doi.org/", doi)) do
                     doc.text "[DOI]"
                   end
                 end
-                if @pdfLinks.keys.include?(paper[:title])
+
+		if @pdfLinks.keys.include?(paper[:title])
                   doc.text(' ')
                   doc.a(href: @pdfLinks[paper[:title]]) { doc.text "[PDF]" }
-                end
+		end
+
                 if paper[:citationCount].to_i > @minCitations
                   doc.text(' ')
                   doc.a(href: paper[:citingPapers], title: "Citations") do
@@ -136,11 +139,10 @@ module Rubyscholar
                     end
                   end
                 end
-                if altmetricDOIs.include?( doi)
+
+		if altmetricDOIs.include?(doi)
                   doc.text(' ')
-                  doc.span(class: 'altmetric-embed',
-                          'data-badge-popover':'bottom',
-                          'data-doi': doi)
+                  doc.span(class: 'altmetric-embed', 'data-badge-popover':'bottom', 'data-doi': doi)
                 end
               end
             end
